@@ -17,10 +17,10 @@ LANG_UN = 'Unknown'
 
 
 def detect_language(text):
-    # 统计总字符数和英文字符数
+    # Count total characters and English characters
     total_count = len(text)
     en_count = len(re.findall(r'[a-zA-Z]', text))
-    # 判断英文字母占比是否超过60%
+    # Check if the percentage of English letters exceeds 60%
     if en_count / total_count > 0.6:
         return LANG_EN
     else:
@@ -50,7 +50,7 @@ def print_doc(json_list):
                 f.write('\n\n')
 
 
-# 递归新建文件夹
+# Recursively create folders
 def makedirs(filename):
     dir_path = os.path.dirname(os.path.abspath(filename))
     if not os.path.exists(dir_path):
@@ -58,7 +58,7 @@ def makedirs(filename):
         print('makedirs %s' % dir_path)
 
 
-# 将数据保存为pickle文件
+# Save data as a pickle file
 def save_pickle_file(data, filename):
     makedirs(filename)
     with open(filename, 'wb') as f:
@@ -66,18 +66,18 @@ def save_pickle_file(data, filename):
     print('saved pkl file ', filename)
 
 
-# 加载pickle文件
+# Load a pickle file
 def load_pickle_file(filename):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
     return data
 
 
-# 把content列表保存成文本文件
+# Save a list of content as a text file
 def save_file(filename, content):
     """
-    :param filename: 输出文件名
-    :param content: 句子列表 默认每个元素自带换行啊
+    :param filename: Output filename
+    :param content: List of sentences, each element with its own line
     :return:
     """
     makedirs(filename)
@@ -88,9 +88,9 @@ def save_file(filename, content):
 
 def save_jsonl_file(filename, data, indent=None):
     """
-    :param filename: 输出文件名
-    :param data: 数据对象，List[json]
-    :param indent: 缩进
+    :param filename: Output filename
+    :param data: Data object, List[json]
+    :param indent: Indentation
     :return: json line format file
     """
     makedirs(filename)
@@ -106,8 +106,8 @@ def save_jsonl_file(filename, data, indent=None):
 
 def save_json_file(filename, data):
     """
-    :param filename: 输出文件名
-    :param data: 数据对象，json/list
+    :param filename: Output filename
+    :param data: Data object, json/list
     :return:
     """
     makedirs(filename)
@@ -118,8 +118,8 @@ def save_json_file(filename, data):
 
 def load_json_file(filename):
     """
-    :param filename: 文件名
-    :return: 数据对象，json/list
+    :param filename: Filename
+    :return: Data object, json/list
     """
     with open(filename, encoding='utf-8') as fp:
         data = json.load(fp)
@@ -132,7 +132,7 @@ def load_jsonl_file(path):
     return data
 
 
-# 给定文件名，和待pickle的对象，用新文件将其覆盖
+# Overwrite the given file with the specified pickled object
 def overwrite_pkl_file(filename, data):
     tmp_filename = filename + '.swp'
     save_pickle_file(data, tmp_filename)
@@ -142,7 +142,7 @@ def overwrite_pkl_file(filename, data):
     print('overwrite %s successful!' % filename)
 
 
-# 给定文件名，和待保存的字符串列表，用新文件将其覆盖
+# Overwrite the given file with the specified string list
 def overwrite_txt_file(filename, data):
     tmp_filename = filename + '.swp'
     
@@ -153,14 +153,14 @@ def overwrite_txt_file(filename, data):
     print('overwrite %s successful!' % filename)
 
 
-# 读取文件的每一行, 返回列表
+# Read each line of a file and return a list
 def get_lines(filename):
     with open(filename, encoding='utf-8') as f:
         data = [i.strip() for i in f.readlines() if i.strip() != '']
         return data
 
 
-# 读取文件的每一行, 返回列表
+# Read the entire content of a file and return it as a string
 def get_txt_content(filename):
     with open(filename, encoding='utf-8') as f:
         text = f.read()
@@ -169,10 +169,10 @@ def get_txt_content(filename):
 
 def get_files(root, suffix):
     """
-    获取指定目录下的所有指定后缀的文件
-    :param root: 指定目录 str 类型  如：'.'
-    :param suffix: 指定后缀 str 类型 如：'.txt'
-    :return: 文件列表
+    Get all files with the specified suffix in the specified directory.
+    :param root: Specified directory str type, e.g., '.'
+    :param suffix: Specified suffix str type, e.g., '.txt'
+    :return: List of files
     """
     import os
     import glob
@@ -183,7 +183,7 @@ def get_files(root, suffix):
     return res
 
 
-# 判断一个词语是不是纯中文词语，即不包含汉字以外的其他符号
+# Check if a word contains only Chinese characters, i.e., no other symbols outside Chinese characters
 def is_chinese_word(word):
     for c in word:
         if not ('\u4e00' <= c <= '\u9fa5'):
@@ -192,7 +192,7 @@ def is_chinese_word(word):
     return True
 
 
-# 判断一个字符是不是中文字符
+# Check if a character is a Chinese character
 def is_chinese_char(c):
     if len(c.strip()) == 1 and '\u4e00' <= c <= '\u9fa5':
         return True
@@ -204,16 +204,16 @@ def datetime2str():
     return datetime.now().strftime('%Y%m%d-%H%M%S')
 
 
-# 计算从start到现在花费的时间
+# Calculate the time cost from 'start' to the current time
 def time_cost(start):
     cost = int(time.time() - start)
     h = cost // 3600
     m = (cost % 3600) // 60
     print('')
-    print('【%s】到目前总耗时: cost %s hours %s mins' % (datetime2str(), h, m))
+    print('Total time cost from %s: %s hours %s mins' % (datetime2str(), h, m))
 
 
-# 将 content_list 追加到filename中
+# Append 'content_list' to 'filename'
 def append_file(filename, content_list, new_line=False):
     if not content_list:
         return
@@ -226,10 +226,10 @@ def append_file(filename, content_list, new_line=False):
 
 
 def keep_only_alnum_chinese(s):
-    # 只保留中英文字符和数字的正则表达式
+    # Regular expression to keep only Chinese characters, English characters, and numbers
     pattern = re.compile(r'[^\u4e00-\u9fa5a-zA-Z0-9]')
 
-    # 去除非中英文字符和数字，得到新字符串
+    # Remove non-Chinese characters, English characters, and numbers, get the new string
     s2 = re.sub(pattern, '', s)
     return s2
 
@@ -246,7 +246,7 @@ def replace_newline(text):
     result = ""
     code_start = False
     for i in range(len(text)):
-        if i>=3 and text[i-3: i] == "```":
+        if i >= 3 and text[i-3: i] == "```":
             code_start = not code_start
             if code_start == False:
                 result += f"\n{text[i]}"

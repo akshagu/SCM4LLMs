@@ -25,7 +25,7 @@ def summarize_embed_one_turn(bot: ChatBot, dialogue_text, dialogue_text_with_ind
     tmp = choose_language_template(lang2template, dialogue_text)
     input_text = tmp.format(input=dialogue_text)
     logger.info(f'turn summarization input_text: \n\n{input_text}')
-    # 如果原文很短，保留原文即可
+    # If the original text is very short, keep the original text as the summarization
     summarization = dialogue_text_with_index
     if get_token_count_davinci(input_text) > 300:
         logger.info(f'current turn text token count > 300, summarize !\n\n')
@@ -138,9 +138,8 @@ def initialize_bot_and_dial(dialogues, dial_id):
                 zh_text = replace_code(zh_text)
                 user_text_display += f"\n\n{zh_text}"
                 user_text_display = user_text_display.replace('__', 'prefix_')
-            
-            # user_text = dialogues[i].replace('\\n', '\n')
 
+            # user_text = dialogues[i].replace('\\n', '\n')
 
             assistant_text = dialogues[i+1]
             assistant_text_display = assistant_text
@@ -168,9 +167,8 @@ def initialize_bot_and_dial(dialogues, dial_id):
             summary, embedding = summarize_embed_one_turn(bot, cur_text_without_index, cur_text_with_index)
 
             cur_turn = Turn(user_input=user_text, system_response=assistant_text, user_sys_text=cur_text_with_index, summ=summary, embedding=embedding)
-            
-            bot.add_turn_history(turn = cur_turn)
-    
+
+            bot.add_turn_history(turn=cur_turn)
 
     return history
 
@@ -182,20 +180,20 @@ def my_chatbot(user_input, history):
 
     my_history = list(sum(history, ()))
 
-    COMMAND_RETURN = '命令已成功执行！'
+    COMMAND_RETURN = 'Command executed successfully!'
 
-    if user_input in ['清空', 'reset']:
+    if user_input in ['clear', 'reset']:
         # history.append((user_input, COMMAND_RETURN))
         history = []
         bot.clear_history()
         logger.info(f'[User Command]: {user_input} {COMMAND_RETURN}')
         return history, history
-    elif user_input in ['导出', 'export']:
+    elif user_input in ['export']:
         # history.append((user_input, COMMAND_RETURN))
         bot.export_history()
         logger.info(f'[User Command]: {user_input} {COMMAND_RETURN}')
         return history, history
-    elif user_input in ['回退', '回滚', 'roll back']:
+    elif user_input in ['rollback']:
         history.pop()
         bot.roll_back()
         logger.info(f'[User Command]: {user_input} {COMMAND_RETURN}')
@@ -214,10 +212,10 @@ def my_chatbot(user_input, history):
         retrieve = None
         if cur_turn_index > 2:
             retrieve = bot.get_related_turn(user_input, args.similar_top_k)
-        
+
         concat_input = get_concat_input(user_input, bot.get_turn_for_previous(), hist_str=retrieve)
-    
-    logger.info(f'\n--------------\n[第{cur_turn_index}轮] concat_input:\n\n{concat_input}\n--------------\n')
+
+    logger.info(f'\n--------------\n[Turn {cur_turn_index}] concat_input:\n\n{concat_input}\n--------------\n')
 
     try:
         rsp: str = bot.ask(concat_input)
@@ -229,8 +227,8 @@ def my_chatbot(user_input, history):
 
     system_text = rsp.strip()
 
-    logger.info(f'\n--------------\n[第{cur_turn_index}轮] system_text:\n\n{system_text}\n--------------\n')
-    
+    logger.info(f'\n--------------\n[Turn {cur_turn_index}] system_text:\n\n{system_text}\n--------------\n')
+
     my_history.append(user_input)
     output = system_text
     output_display = replace_newline(output)
@@ -252,7 +250,7 @@ if __name__ == '__main__':
 
     log_path = args.logfile
     makedirs(log_path)
-    # 配置日志记录
+    # Configure logging
 
     logger = logging.getLogger('dialogue_logger')
     logger.setLevel(logging.INFO)
@@ -279,7 +277,7 @@ if __name__ == '__main__':
 
     if args.translation_file:
         translation_map = load_json_file(args.translation_file)
-    
+
     bot = ChatBot(model_name=args.model_name)
 
     with gr.Blocks() as demo:
@@ -288,5 +286,5 @@ if __name__ == '__main__':
         state = gr.State()
         txt = gr.Textbox(show_label=False, placeholder="Ask me a question and press enter.").style(container=False)
         txt.submit(my_chatbot, inputs=[txt, state], outputs=[chatbot, state])
-        
-    demo.launch(share = False)
+
+    demo.launch(share=False)

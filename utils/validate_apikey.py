@@ -9,10 +9,9 @@ APIKEY_FILE = 'config/apikey.txt'
 
 ENGINE_TURBO = 'gpt-3.5-turbo'
 
-# 读取 apikey.txt 中的所有行
+# Read all lines from apikey.txt
 with open(APIKEY_FILE) as f:
     apikeys = [line.strip() for line in f]
-
 
 def call_func(prompt, apikey):
     openai.api_key = apikey
@@ -24,7 +23,7 @@ def call_func(prompt, apikey):
     text = response['choices'][0]['message']['content'].strip()
     return text
 
-# 验证每个 apikey 是否有效
+# Validate each apikey
 
 QUOTA_ERROR = 'You exceeded your current quota'
 
@@ -40,7 +39,7 @@ for i, apikey in enumerate(apikeys):
         error_msg = str(e)
         print(f"index: {i}, {apikey} is invalid. Exception: {e}")
 
-# 将有效的 apikey 写回 apikey.txt 文件中
+# Write back the valid apikeys to the apikey.txt file
 with open(APIKEY_FILE, 'w') as f:
     for apikey in valid_apikeys:
         f.write(f"{apikey}\n")

@@ -20,10 +20,10 @@ def split_arr(arr):
     result = []
     start = 0
     for i in range(1, len(arr)):
-        if arr[i] != arr[start]:  # 当出现不同的元素时，将前面的部分作为一组
+        if arr[i] != arr[start]:  # When encountering a different element, treat the preceding part as a group
             result.append([arr[start], list(range(start, i))])
             start = i
-    result.append([arr[start], list(range(start, len(arr)))])  # 加入最后一组
+    result.append([arr[start], list(range(start, len(arr)))])  # Add the last group
     return result
 
 id2all = {}
@@ -63,5 +63,3 @@ for i, obj in enumerate(data):
     id2all[uid]['summary'] = obj['summary']
 
 save_json_file(dst_path, id2all)
-
-

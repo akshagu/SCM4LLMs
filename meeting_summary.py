@@ -34,7 +34,7 @@ def get_first_prompt(theme, user_text):
     return concat_input
 
 
-def get_paragragh_prompt(theme, user_text):
+def get_paragraph_prompt(theme, user_text):
     concat_input = zh_start_prompt.format(theme=theme, input=user_text)
     return concat_input
 
@@ -70,7 +70,6 @@ def summarize_meeting(meeting_id, dialogues, model_name, scm=True):
 
     logger.info(f"meeting_id: {meeting_id}   theme: {theme}")
 
-
     parts = spliter.split(dialogues, meeting_id)
     total = len(parts)
     for i, text in enumerate(parts):
@@ -82,21 +81,18 @@ def summarize_meeting(meeting_id, dialogues, model_name, scm=True):
                 pre_info = bot.get_turn_for_previous()
                 concat_input = get_concat_input(theme, text, pre_info)
         else:
-            concat_input = get_paragragh_prompt(theme, text)
+            concat_input = get_paragraph_prompt(theme, text)
 
-
-
-        logger.info(f'\n--------------\n[第{i+1}轮] model_name:{model_name};  USE SCM: {scm} \n\nconcat_input:\n\n{concat_input}\n--------------\n')
+        logger.info(f'\n--------------\n[Round {i+1}] model_name: {model_name}; USE SCM: {scm} \n\nconcat_input:\n\n{concat_input}\n--------------\n')
 
         summary: str = bot.ask(concat_input).strip()
-        logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{summary}\n\n")
+        logger.info(f"model_name: {model_name}; USE SCM: {scm}; Summary:\n\n{summary}\n\n")
 
         summary_turn = SummaryTurn(paragraph=text, summary=summary)
-        
         bot.add_turn_history(summary_turn)
 
-        logger.info(f"model_name:{model_name}; USE SCM: {scm};  Processing: {i+1}/{total}; add_turn_history is done!")
-    
+        logger.info(f"model_name: {model_name}; USE SCM: {scm}; Processing: {i+1}/{total}; add_turn_history is done!")
+
     logger.info(f"First Level Summarization Done!")
 
     final_summary = bot.get_final_summary()
@@ -142,7 +138,7 @@ if __name__ == '__main__':
     log_path = args.logfile
     meeting_path = args.meeting_file
     makedirs(log_path)
-    # 配置日志记录
+    # Configure logging
 
     logger = logging.getLogger('summary_logger')
     logger.setLevel(logging.INFO)
@@ -166,7 +162,7 @@ if __name__ == '__main__':
 
     meeting_ids = args.meeting_ids
     
-    # whether use scm for history memory
+    # Whether to use scm for historical memory
     USE_SCM = False if args.no_scm else True
     model_name = args.model_name
 
