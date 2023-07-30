@@ -35,8 +35,8 @@ class Turn(object):
     def to_json(self):
         js = {
             'user': self.user_input,
-            'system': self.system_response
-            # 'summary': self.summ
+            'system': self.system_response,
+            'summary': self.summ
         }
         return js
     
@@ -80,23 +80,25 @@ class ChatBot(object):
         save_json_file(json_filename, hist_lst)
         save_file(txt_filename, hist_txt_lst)
     
-    # def load_history(self, hist_file):
-    #     diag_hist = load_jsonl_file(hist_file)
-    #     emb_hist = load_jsonl_file(hist_file + '.emb.json')
-    #     for dig, e in zip(diag_hist, emb_hist):
-    #         js = {}
-    #         js['text'] = dig['text']
-    #         js['summ'] = dig['summ']
-    #         js['embedding'] = e
-    #         one = Turn(**js)
-    #         self.history.append(one)
-    #     self.show_history()
+    def load_history(self, hist_file):
+        diag_hist = load_json_file(hist_file)
+        emb_hist = load_json_file(hist_file + '.emb.json')
+        for dig, e in zip(diag_hist, emb_hist):
+            js = {}
+            js['user_input'] = dig['text']
+            js['summ'] = dig['summ']
+            js['embedding'] = e
+            js['system_response'] = dig.get('summ')
+            js['user_sys_text'] = dig.get('user_sys_text')
+            one = Turn(**js)
+            self.history.append(one)
+        ##self.show_history()
     
-    # def show_history(self):
-    #     print('\n\n-------------【history】-------------\n\n')
-    #     for i, turn in enumerate(self.history):
-    #         print(f'{turn.text.strip()}\n\n')
-    #         # print(f'对话摘要: \n{turn.summ}\n')
+    def show_history(self):
+        print('\n\n-------------【history】-------------\n\n')
+        for i, turn in enumerate(self.history):
+            print(f'{turn.user_input.strip()}\n\n')
+            print(f'对话摘要: \n{turn.summ}\n')
 
     def ask(self, prompt) -> str:
         output = self.api_func(prompt, verbo=False)
