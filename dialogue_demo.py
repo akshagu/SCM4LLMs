@@ -158,6 +158,7 @@ if __name__ == '__main__':
     parser.add_argument("--model_name", type=str, default=ENGINE_DAVINCI_003, choices=model_choices)
     parser.add_argument("--logfile", type=str, default="./logs/log.txt")
     parser.add_argument("--similar_top_k", type=int, default=4)
+    parser.add_argument("--history_file", type=str, default=None)
     args = parser.parse_args()
 
     check_key_file(args.apikey_file)
@@ -188,6 +189,10 @@ if __name__ == '__main__':
 
     stamp = datetime2str()
     bot = ChatBot(model_name=args.model_name)
+
+    if (args.history_file):
+      print(f'#################################  Loading history file: {args.history_file} #################################')
+      bot.load_history(args.history_file)
 
     with gr.Blocks() as demo:
         gr.Markdown(f"<h1><center>Long Dialogue Chatbot ({args.model_name})</center></h1>")
