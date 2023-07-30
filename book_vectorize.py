@@ -89,7 +89,7 @@ def summarize_book(book_file, model_name, scm=True):
         summary: str = bot.ask(concat_input).strip()
         logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{summary}\n\n")
         embedding = bot.vectorize(text)
-        hist_lst.append({'text': text, 'summ': summary})
+        hist_lst.append({'text': concat_input, 'summ': summary, 'user_sys_text': '[Turn {}]\n\nUser: {}\n\nAssistant: {}'.format(i, concat_input, summary)})
         hist_emb_lst.append(embedding)
         # just book summarization do not need embedding
         # embedding = None
