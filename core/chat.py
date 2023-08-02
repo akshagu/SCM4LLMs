@@ -82,15 +82,15 @@ class ChatBot(object):
     
     def load_history(self, hist_file):
         diag_hist = load_json_file(hist_file)
-        emb_hist = load_json_file(hist_file + '.emb.json')
-        for dig, e in zip(diag_hist, emb_hist):
+        for dig in diag_hist:
             js = {}
-            js['user_input'] = dig['text']
+            js['user_input'] = dig['user_input']
             js['summ'] = dig['summ']
-            js['embedding'] = e
-            js['system_response'] = dig.get('summ')
+            js['embedding'] = dig['embedding']
+            js['system_response'] = dig.get('system_response')
             js['user_sys_text'] = dig.get('user_sys_text')
             one = Turn(**js)
+            self.add_turn_history(one)
             self.history.append(one)
         ##self.show_history()
     
