@@ -101,9 +101,6 @@ def summarize_book(book_file, model_name, scm=True):
     json_filename = f'history/book-sum/book-summary-{basename}-{model_name}{suffix}.json'
     makedirs(json_filename)
     save_json_file(json_filename, hist_lst)
-    json_filename = f'history/book-sum/book-summary-{basename}-{model_name}{suffix}.json.emb.json'
-    makedirs(json_filename)
-    save_json_file(json_filename, hist_emb_lst)
     bot.clear_history()
 
 
