@@ -30,6 +30,26 @@ def get_user_input(user_str, pre_sre, hist_str=None):
 
     return input_text
 
+def summarize_embed_one_turn(bot: SummaryBot, dialogue_text, dialogue_text_with_index):
+    lang2template = {
+        LANG_EN: en_turn_summarization_prompt,
+        LANG_ZH: zh_turn_summarization_prompt
+    }
+
+    tmp = choose_language_template(lang2template, dialogue_text)
+    input_text = tmp.format(input=dialogue_text)
+    logger.info(f'turn summarization input_text: \n\n{input_text}')
+    # 如果原文很短，保留原文即可
+    summarization = dialogue_text_with_index
+    if get_token_count_davinci(input_text) > 300:
+        logger.info(f'current turn text token count > 300, summarize !\n\n')
+        summarization = bot.ask(input_text)
+        logger.info(f'Summarization is:\n\n{summarization}\n\n')
+    else:
+        logger.info(f'Raw content is short, keep raw content as summarization:\n\n{summarization}\n\n')
+    embedding = bot.vectorize(dialogue_text_with_index)
+    return summarization, embedding
+
 
 def check_key_file(key_file):
     if not os.path.exists(key_file):
