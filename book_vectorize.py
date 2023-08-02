@@ -13,7 +13,7 @@ args: argparse.Namespace = None
 bot: SummaryBot = None
 
 
-def get_concat_input(user_str, pre_sre, hist_str=None):
+def get_user_input(user_str, pre_sre, hist_str=None):
     lang2template = {
         LANG_EN: en_agent_scm_prompt,
         LANG_ZH: zh_agent_scm_prompt
@@ -42,10 +42,9 @@ def get_first_prompt(user_text):
         LANG_EN: en_start_prompt,
         LANG_ZH: zh_start_prompt
     }
-
     tmp = choose_language_template(lang2template, user_text)
-    concat_input = tmp.format(text=user_text)
-    return concat_input
+    user_input = tmp.format(text=user_text)
+    return user_input
 
 
 def get_paragragh_prompt(user_text):
@@ -55,8 +54,8 @@ def get_paragragh_prompt(user_text):
     }
 
     tmp = choose_language_template(lang2template, user_text)
-    concat_input = tmp.format(text=user_text)
-    return concat_input
+    user_input = tmp.format(text=user_text)
+    return user_input
 
 
 def summarize_book(book_file, model_name, scm=True):
@@ -73,17 +72,17 @@ def summarize_book(book_file, model_name, scm=True):
     total = len(paragraphs)
 
     for i, text in enumerate(paragraphs):
-        concat_input = ''
+        user_input = ''
         if scm:
             if i == 0:
-                concat_input = get_first_prompt(text)
+                user_input = get_first_prompt(text)
             else:
                 pre_info = bot.get_turn_for_previous()
-                concat_input = get_concat_input(text, pre_info)
+                user_input = get_user_input(text, pre_info)
         else:
-            concat_input = get_paragragh_prompt(text)
+            user_input = get_paragragh_prompt(text)
         
-        logger.info(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file}  model_name:{model_name};  USE SCM: {scm} \n\nconcat_input:\n\n{concat_input}\n--------------\n')
+        logger.info(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file}  model_name:{model_name};  USE SCM: {scm} \n\nuser_input:\n\n{user_input}\n--------------\n')
         print(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file} model_name:{model_name};  USE SCM: {scm}\n--------------\n')
 
         summary: str = bot.ask(concat_input).strip()
