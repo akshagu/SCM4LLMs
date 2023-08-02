@@ -83,7 +83,6 @@ def summarize_book(book_file, model_name, scm=True):
     global bot
 
     bot.clear_history()
-    hist_emb_lst = []
     hist_lst = []
     spliter = BookSpliter(model_name)
 
@@ -105,14 +104,17 @@ def summarize_book(book_file, model_name, scm=True):
         logger.info(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file}  model_name:{model_name};  USE SCM: {scm} \n\nuser_input:\n\n{user_input}\n--------------\n')
         print(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file} model_name:{model_name};  USE SCM: {scm}\n--------------\n')
 
-        summary: str = bot.ask(concat_input).strip()
-        logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{summary}\n\n")
-        embedding = bot.vectorize(text)
-        hist_lst.append({'text': concat_input, 'summ': summary, 'user_sys_text': '[Turn {}]\n\nUser: {}\n\nAssistant: {}'.format(i, concat_input, summary)})
-        hist_emb_lst.append(embedding)
+        system_response: str = bot.ask(user_input).strip()
+        logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{system_response}\n\n")
+        cur_text_without_index = 'User: {}\n\nAssistant: {}'.format(user_input, system_response)
+        cur_text_with_index = '[Turn {}]\n\nUser: {}\n\nAssistant: {}'.format(i, user_input, system_response)
+        summ, embedding = summarize_embed_one_turn(bot, cur_text_without_index, cur_text_with_index)
+        hist_lst.append({'user_input': user_input, 'summ': summ, 'user_sys_text': cur_text_with_index, 'system_response': system_response, 'embedding': embedding})
         # just book summarization do not need embedding
         # embedding = None
-        logger.info(f"model_name:{model_name}; USE SCM: {scm};  Processing: {i+1}/{total}; vectorization is done!")
+        cur_turn = SummaryTurn(paragraph=text, summary=system_response, embedding=bot.vectorize(system_response))
+        bot.add_turn_history(cur_turn)
+        logger.info(f"model_name:{model_name}; USE SCM: {scm};  Processing: {i+1}/{total}; add_turn_history is done!")
     
     suffix = ''
     if scm is False:
