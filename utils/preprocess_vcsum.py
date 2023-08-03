@@ -10,6 +10,7 @@ from tools import *
 
 turbo_tokenizer = tiktoken.encoding_for_model(ENGINE_TURBO)
 davinci_tokenizer = tiktoken.encoding_for_model(ENGINE_DAVINCI_003)
+gpt4_tokenizer = tiktoken.encoding_for_model(ENGINE_GPT4)
 
 content_path = 'evaluation_data/VCSum/dev_overall.json'
 summary_path = 'evaluation_data/VCSum/long_dev.json'
@@ -38,6 +39,7 @@ for i, obj in enumerate(data):
     speak_data = []
     davinci_tokens = 0
     turbo_tokens = 0
+    gpt4_tokens = 0
     for spk_idx, ct_id_lst in speak_lst:
         turn = {}
         turn['role'] = f"Speaker {spk_idx}"
@@ -51,10 +53,12 @@ for i, obj in enumerate(data):
 
         davinci_tokens += len(davinci_tokenizer.encode(cur_content))
         turbo_tokens += len(turbo_tokenizer.encode(cur_content))
+        gpt4_tokens += len(gpt4_tokenizer.encode(cur_content))
         speak_data.append(turn)
     id2all[uid]['dialogues'] = speak_data
     id2all[uid]['davinci_tokens'] = davinci_tokens
     id2all[uid]['turbo_tokens'] = turbo_tokens
+    id2all[uid]['gpt4_tokens'] = gpt4_tokens
 
 
 data = load_jsonl_file(summary_path)

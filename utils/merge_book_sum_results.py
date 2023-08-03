@@ -9,6 +9,7 @@ sys.path.append('..')
 from tools import *
 
 turbo_tokenizer = tiktoken.encoding_for_model(ENGINE_TURBO)
+gpt4_tokenizer = tiktoken.encoding_for_model(ENGINE_GPT4)
 davinci_tokenizer = tiktoken.encoding_for_model(ENGINE_DAVINCI_003)
 
 
@@ -53,6 +54,8 @@ for f in files:
         tokenizer = turbo_tokenizer
     elif mn == ENGINE_DAVINCI_003:
         tokenizer = davinci_tokenizer
+    elif mn == ENGINE_GPT4:
+        tokenizer = gpt4_tokenizer
 
     total_tokens = 0
     for js in summary_list:
@@ -72,11 +75,14 @@ for i, book in enumerate(book_names):
     lang = detect_language(book.replace('_', ' '))
     obj['language'] = lang
     obj[f"{ENGINE_DAVINCI_003}_summary"] = book_model_to_summary[f"{book}_{ENGINE_DAVINCI_003}"][0]
+    obj[f"{ENGINE_GPT4}_summary"] = book_model_to_summary[f"{book}_{ENGINE_GPT4}"][0]
     obj[f"{ENGINE_TURBO}_summary"] = book_model_to_summary[f"{book}_{ENGINE_TURBO}"][0]
     obj[f"{ENGINE_DAVINCI_003}_content_tokens"] = book_model_to_summary[f"{book}_{ENGINE_DAVINCI_003}"][1]
     obj[f"{ENGINE_TURBO}_content_tokens"] = book_model_to_summary[f"{book}_{ENGINE_TURBO}"][1]
+    obj[f"{ENGINE_GPT4}_content_tokens"] = book_model_to_summary[f"{book}_{ENGINE_GPT4}"][1]
     obj[f"{ENGINE_DAVINCI_003}_win"] = False
     obj[f"{ENGINE_TURBO}_win"] = False
+    obj[f"{ENGINE_GPT4}_win"] = False
     obj[f"comment"] = ""
 
     data.append(obj)

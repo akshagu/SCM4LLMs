@@ -63,7 +63,7 @@ def check_key_file(key_file):
 
 
 def get_first_prompt(user_text, model_name):
-    if model_name in [ENGINE_TURBO]:
+    if model_name in [ENGINE_GPT4, ENGINE_TURBO]:
         return user_text
     else:
         lang2template = {
@@ -153,7 +153,7 @@ def my_chatbot(user_input, history):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    model_choices = [ENGINE_DAVINCI_003, ENGINE_TURBO]
+    model_choices = [ENGINE_GPT4, ENGINE_DAVINCI_003, ENGINE_TURBO]
     parser.add_argument("--apikey_file", type=str, default="./config/apikey.txt")
     parser.add_argument("--model_name", type=str, default=ENGINE_DAVINCI_003, choices=model_choices)
     parser.add_argument("--logfile", type=str, default="./logs/log.txt")

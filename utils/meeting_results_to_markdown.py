@@ -46,6 +46,7 @@ dial_map =  {}
 for i, mid in enumerate(mid_lst):
     printer.print(f"\n\n## {mid}\n\n")
     uid_turbo = f"{mid}-{ENGINE_TURBO}"
+    uid_gpt4 = f"{mid}-{ENGINE_GPT4}"
     uid_davinci = f"{mid}-{ENGINE_DAVINCI_003}"
 
     turbo_ans = pred_summary_data[uid_turbo]

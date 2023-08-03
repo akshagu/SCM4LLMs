@@ -229,16 +229,34 @@ def call_gpt3_5_turbo(prompt, apikey=None, verbo=True):
     text = response['choices'][0]['message']['content'].strip()
     return text
 
+@log_openai_result
+@handle_call_openai_api
+def call_gpt4(prompt, apikey=None, verbo=True):
+    api_model_index = ENGINE_GPT4
+    response = openai.ChatCompletion.create(
+        model=ENGINE_GPT4, 
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.1,
+        stop=["###"]
+    )
+    if verbo:
+        log_info(f"[{api_model_index} request cost token]: {response['usage']['total_tokens']}")
+        log_info(f"[{api_model_index} available tokens]: {4000 - response['usage']['total_tokens']}")
+    text = response['choices'][0]['message']['content'].strip()
+    return text
+
 
 MODEL_MAP = {
     ENGINE_DAVINCI_003: call_text_davinci_003,
-    ENGINE_TURBO: call_gpt3_5_turbo
+    ENGINE_TURBO: call_gpt3_5_turbo,
+    ENGINE_GPT4: call_gpt4,
 }
 
 MODEL_EMBEDDING_MAP = {
     ENGINE_EMBEDDING_ADA_002: call_embedding_openai,
     ENGINE_DAVINCI_003: call_embedding_openai,
     ENGINE_TURBO: call_embedding_openai,
+    ENGINE_GPT4: call_embedding_openai,
 }
 
 MODEL_LIST = [k for k in MODEL_MAP.keys()]

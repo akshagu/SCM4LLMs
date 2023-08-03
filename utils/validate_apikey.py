@@ -9,14 +9,20 @@ APIKEY_FILE = 'config/apikey.txt'
 
 ENGINE_TURBO = 'gpt-3.5-turbo'
 
+<<<<<<< HEAD
 # Read all lines from apikey.txt
+=======
+ENGINE_GPT4 = 'gpt-4'
+
+# 读取 apikey.txt 中的所有行
+>>>>>>> 3fc5503 (feat: add gpt 4 as an api option)
 with open(APIKEY_FILE) as f:
     apikeys = [line.strip() for line in f]
 
 def call_func(prompt, apikey):
     openai.api_key = apikey
     response = openai.ChatCompletion.create(
-        model=ENGINE_TURBO, 
+        model=ENGINE_GPT4, 
         messages=[{"role": "user", "content": prompt}],
         stop=["###"]
     )

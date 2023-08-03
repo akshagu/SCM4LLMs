@@ -70,7 +70,7 @@ class Utterance:
 
 
 def get_tokenizer_func(model_name):
-    if model_name in [ENGINE_TURBO, ENGINE_DAVINCI_003]:
+    if model_name in [ENGINE_GPT4, ENGINE_TURBO, ENGINE_DAVINCI_003]:
         tokenizer = tiktoken.encoding_for_model(model_name)
         return tokenizer.encode
     else:

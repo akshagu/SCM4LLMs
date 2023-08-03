@@ -8,6 +8,7 @@ import pickle
 import tiktoken
 
 ENGINE_TURBO = 'gpt-3.5-turbo'
+ENGINE_GPT4 = 'gpt-4'
 ENGINE_DAVINCI_003 = 'text-davinci-003'
 ENGINE_EMBEDDING_ADA_002 = 'text-embedding-ada-002'
 

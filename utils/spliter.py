@@ -6,7 +6,7 @@ from core.meeting import Utterance
 from typing import List
 
 def get_tokenizer_func(model_name):
-    if model_name not in [ENGINE_TURBO, ENGINE_DAVINCI_003]:
+    if model_name not in [ENGINE_GPT4, ENGINE_TURBO, ENGINE_DAVINCI_003]:
         raise ValueError(f'Invalid model name: {model_name} when calling get_tokenizer_func.')
     tokenizer = tiktoken.encoding_for_model(model_name)
     return tokenizer.encode

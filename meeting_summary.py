@@ -123,7 +123,7 @@ def get_target_meetings(meeting_data, meeting_ids):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    model_choices = [ENGINE_TURBO, ENGINE_DAVINCI_003]
+    model_choices = [ENGINE_GPT4, ENGINE_TURBO, ENGINE_DAVINCI_003]
     parser.add_argument("--apikey_file", type=str, default="./config/apikey.txt")
     parser.add_argument("--model_name", type=str, default=ENGINE_DAVINCI_003, choices=model_choices)
     parser.add_argument("--meeting_file", type=str, default="./data/meeting/vc_summary.json")
