@@ -186,7 +186,7 @@ class ChatBot(object):
     
     def get_related_turn(self, query, k=3):
         q_embedding = self.vectorize(query)
-        # 只检索 [0, 上一轮)   上一轮的文本直接拼接进入对话，无需检索
+        # Only retrieve [0, previous turn) The text of the previous turn is directly spliced into the dialogue without retrieval
         sim_lst = [
             self._similarity(q_embedding, v.embedding)
             for v in self.history[:-1]
@@ -210,7 +210,7 @@ class ChatBot(object):
         first_round = True
         
         while shorten_history:
-            # 开始用模型来判断是否精简, 如果是，修改 use_summary_map[key] = True
+            # Start to use the model to judge whether it is streamlined, if so, modify use_summary_map[key] = True
             for i, turn_idx in enumerate(topk_indices):
                 # todo: judge
                 cur_turn = self.history[turn_idx]
@@ -245,7 +245,7 @@ class ChatBot(object):
         # print(index_value_lst)
         sorted_index_value_lst = sorted(index_value_lst, key=lambda x: x[0])
         # LOCAL_CHAT_LOGGER.info(f'\n--------------\n')
-        # LOCAL_CHAT_LOGGER.info(f"\nTop{k}相似历史索引及其相似度: \n\n{sorted_index_value_lst}\n")
+        # LOCAL_CHAT_LOGGER.info(f"\nTop{k}Similarity history index and its similarity: \n\n{sorted_index_value_lst}\n")
         # LOCAL_CHAT_LOGGER.info(f'\n--------------\n')
 
         retrieve_history_text = ''
@@ -255,8 +255,8 @@ class ChatBot(object):
             flag = turn_flag_map[idx]
 
             # LOCAL_CHAT_LOGGER.info(f'\n@@@@@@@@@@@@@@@@@@')
-            # LOCAL_CHAT_LOGGER.info(f'检索到的历史轮: {turn.user_sys_text[:100]}\n')
-            # LOCAL_CHAT_LOGGER.info(f'模型对于这段文本的选择: {flag}')
+            # LOCAL_CHAT_LOGGER.info(f'retrieved history round: {turn.user_sys_text[:100]}\n')
+            # LOCAL_CHAT_LOGGER.info(f'The model's choice for this text: {flag}')
 
             text = ''
             if flag == 'drop':
@@ -267,7 +267,7 @@ class ChatBot(object):
                 text = turn.user_sys_text
 
             # LOCAL_CHAT_LOGGER.info(f'turn final text: {text}\n\n')
-            # LOCAL_CHAT_LOGGER.info(f'相似度：{sim_score}')
+            # LOCAL_CHAT_LOGGER.info(f'similarity：{sim_score}')
             retrieve_history_text += f'{text}\n\n'
         
         return retrieve_history_text
