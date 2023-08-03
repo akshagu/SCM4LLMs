@@ -89,32 +89,34 @@ def summarize_book(book_file, model_name, scm=True):
     paragraphs = spliter.split(book_file)
 
     total = len(paragraphs)
+    i = 0
+    for text in paragraphs:
+        if (len(text)>0):
+          user_input = ''
+          if scm:
+              if i == 0:
+                  user_input = get_first_prompt(text)
+              else:
+                  pre_info = bot.get_turn_for_previous()
+                  user_input = get_user_input(text, pre_info)
+          else:
+              user_input = get_paragragh_prompt(text)
+          
+          logger.info(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file}  model_name:{model_name};  USE SCM: {scm} \n\nuser_input:\n\n{user_input}\n--------------\n')
+          print(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file} model_name:{model_name};  USE SCM: {scm}\n--------------\n')
 
-    for i, text in enumerate(paragraphs):
-        user_input = ''
-        if scm:
-            if i == 0:
-                user_input = get_first_prompt(text)
-            else:
-                pre_info = bot.get_turn_for_previous()
-                user_input = get_user_input(text, pre_info)
-        else:
-            user_input = get_paragragh_prompt(text)
-        
-        logger.info(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file}  model_name:{model_name};  USE SCM: {scm} \n\nuser_input:\n\n{user_input}\n--------------\n')
-        print(f'\n--------------\n[第{i+1}/{total}轮] book_file: {book_file} model_name:{model_name};  USE SCM: {scm}\n--------------\n')
-
-        system_response: str = bot.ask(user_input).strip()
-        logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{system_response}\n\n")
-        cur_text_without_index = 'User: {}\n\nAssistant: {}'.format(user_input, system_response)
-        cur_text_with_index = '[Turn {}]\n\nUser: {}\n\nAssistant: {}'.format(i, user_input, system_response)
-        summ, embedding = summarize_embed_one_turn(bot, cur_text_without_index, cur_text_with_index)
-        hist_lst.append({'user_input': user_input, 'summ': summ, 'user_sys_text': cur_text_with_index, 'system_response': system_response, 'embedding': embedding})
-        # just book summarization do not need embedding
-        # embedding = None
-        cur_turn = SummaryTurn(paragraph=text, summary=system_response, embedding=bot.vectorize(system_response))
-        bot.add_turn_history(cur_turn)
-        logger.info(f"model_name:{model_name}; USE SCM: {scm};  Processing: {i+1}/{total}; add_turn_history is done!")
+          system_response: str = bot.ask(user_input).strip()
+          logger.info(f"model_name:{model_name}; USE SCM: {scm}; Summary:\n\n{system_response}\n\n")
+          cur_text_without_index = 'User: {}\n\nAssistant: {}'.format(user_input, system_response)
+          cur_text_with_index = '[Turn {}]\n\nUser: {}\n\nAssistant: {}'.format(i, user_input, system_response)
+          summ, embedding = summarize_embed_one_turn(bot, cur_text_without_index, cur_text_with_index)
+          hist_lst.append({'user_input': user_input, 'summ': summ, 'user_sys_text': cur_text_with_index, 'system_response': system_response, 'embedding': embedding})
+          # just book summarization do not need embedding
+          # embedding = None
+          cur_turn = SummaryTurn(paragraph=text, summary=system_response, embedding=bot.vectorize(system_response))
+          bot.add_turn_history(cur_turn)
+          logger.info(f"model_name:{model_name}; USE SCM: {scm};  Processing: {i+1}/{total}; add_turn_history is done!")
+          i=i+1
     
     suffix = ''
     if scm is False:
